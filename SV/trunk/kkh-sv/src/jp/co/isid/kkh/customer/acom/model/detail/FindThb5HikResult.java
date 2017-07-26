@@ -1,0 +1,63 @@
+package jp.co.isid.kkh.customer.acom.model.detail;
+
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import jp.co.isid.kkh.model.AbstractServiceResult;
+
+/**
+*
+* <P>
+* 実施No自動付与の結果を保持する。
+* </P>
+* <P>
+* <B>修正履歴</B><BR>
+* ・新規作成(2011/1/10 H.izawa)<BR>
+* </P>
+* @author
+*/
+@XmlRootElement(namespace = "http://detail.model.kkh.isid.co.jp/")
+@XmlType(namespace = "http://detail.model.kkh.isid.co.jp/")
+public class FindThb5HikResult extends AbstractServiceResult {
+
+	/** 広告費明細テーブル(THB2KMEI)VOリスト */
+	private List<HikVO> _thb5HikList;
+
+
+	/**
+	 * 広告費明細テーブル(THB2KMEI)VOリストを設定します。
+	 * @param thb2KmeiList
+	 */
+	public List<HikVO> get_thb5HikList() {
+		return _thb5HikList;
+	}
+
+	/**
+	 * 広告費明細テーブル(THB2KMEI)VOリストを設定します。
+	 * @param thb2KmeiList
+	 */
+	public void set_thb5HikList(List<HikVO> thb5HikList) {
+		_thb5HikList = thb5HikList;
+	}
+	/** ListだけではWebサービスに公開されないのでダミープロパティを追加 */
+    private String _dummy;
+
+    /**
+     * ListだけではWebサービスに公開されないのでダミープロパティを追加を取得します。
+     * @return String ダミープロパティ
+     */
+    public String getDummy() {
+        return _dummy;
+    }
+
+    /**
+     * ListだけではWebサービスに公開されないのでダミープロパティを追加を設定します。
+     * @param dummy ダミープロパティ
+     */
+    public void setDummy(String dummy) {
+        this._dummy = dummy;
+    }
+
+}
