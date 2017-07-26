@@ -5,7 +5,6 @@
     <property file="build.properties" />
 
     <!-- 総合-->
-
     <property name="deploy.ver" value="1.5.1.3"/>
 
     <!-- 本番-->
