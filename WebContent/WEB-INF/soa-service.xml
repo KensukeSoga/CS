@@ -1,0 +1,1459 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+
+    <!--
+        SOA Service Framework パラメータ定義です（必須定義）。        ・exceptionHandlerDebugMode ...
+            クライアントにスローする例外にデバッグ用の情報を含めるかどうかの設定。            セキュリティホールになりうるため、運用時にはfalseに設定してください。        ・accessLogOutputEncoding ... アクセスログ（稼動ログ）の出力エンコーディング設定        ・accessLogDefaultIdentifier ... アクセスログ（稼動ログ）のデフォルト識別子        ・accessLogOutCategory ... アクセスログ（稼動ログ）のLog4j出力カテゴリ
+        ・accessLogInvalidCategory ... アクセスログ（稼動ログ）の異常系データのLog4j出力カテゴリ
+    -->
+    <bean id="frameworkParameter" class="jp.co.isid.soa.framework.service.core.FrameworkParameterBean">
+        <property name="exceptionHandlerDebugMode"><value>true</value></property>
+        <property name="accessLogOutputEncoding"><value>Windows-31J</value></property>
+        <!--<property name="accessLogDefaultIdentifier"><value></value></property>-->
+        <property name="accessLogOutCategory"><value>soa.accessLog</value></property>
+        <property name="accessLogInvalidCategory"><value>soa.invalidAccessLog</value></property>
+    </bean>
+
+    <!--
+        Javaクライアント向けメッセージ圧縮フィルタの定義です（必須定義）。    -->
+    <bean id="fastinfoset" class="org.apache.cxf.feature.FastInfosetFeature"/>
+
+    <!-- NJSecurityServiceのサービス定義です（必須定義）。 -->
+    <jaxws:endpoint id="njSecurityService"
+        implementor="jp.co.isid.njsecurity.webservice.stateless.NJSecurityStatelessService"
+        address="/NjSecurityService">
+    </jaxws:endpoint>
+
+    <!-- 以下サービスごとの定義です -->
+
+    <jaxws:endpoint id="masterService"
+        implementor="jp.co.isid.kkh.service.mastermaintenance.MasterService"
+        address="/MasterService">
+        <jaxws:inInterceptors>
+            <ref bean="MasterServiceAccessLogInterceptor"/>
+            <ref bean="MasterServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="masterMacService"
+        implementor="jp.co.isid.kkh.customer.mac.service.master.MasterMacService"
+        address="/MasterMacService">
+        <jaxws:inInterceptors>
+            <ref bean="MasterMacServiceAccessLogInterceptor"/>
+            <ref bean="MasterMacServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+<!--アサヒ-->
+    <!--明細登録 -->
+    <jaxws:endpoint id="detailAshService"
+        implementor="jp.co.isid.kkh.customer.ash.service.detail.DetailAshService"
+        address="/DetailAshService">
+        <jaxws:inInterceptors>
+            <ref bean="DetailAshServiceAccessLogInterceptor"/>
+            <ref bean="DetailAshServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+<!--アサヒ   終わり-->
+
+<!--アコム-->
+    <!--明細登録 -->
+    <jaxws:endpoint id="detailAcomService"
+        implementor="jp.co.isid.kkh.customer.acom.service.detail.DetailAcomService"
+        address="/DetailAcomService">
+        <jaxws:inInterceptors>
+            <ref bean="DetailAcomServiceAccessLogInterceptor"/>
+            <ref bean="DetailAcomServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+<!--アコム  終わり-->
+
+    <!--武田薬品-->
+	<jaxws:endpoint id="detailTakedaService"
+        implementor="jp.co.isid.kkh.customer.tkd.service.detail.DetailTakedaService"
+        address="/DetailTakedaService">
+        <jaxws:inInterceptors>
+            <ref bean="DetailTakedaServiceAccessLogInterceptor"/>
+            <ref bean="DetailTakedaServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--武田薬品   終わり-->
+
+    <!--武田請求明細-->
+	<jaxws:endpoint id="ReportTkdBillingService"
+        implementor="jp.co.isid.kkh.customer.tkd.service.report.ReportTkdBillingService"
+        address="/ReportTkdBillingService">
+        <jaxws:inInterceptors>
+            <ref bean="ReportTkdBillingServiceAccessLogInterceptor"/>
+            <ref bean="ReportTkdBillingServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+    <!--武田請求明細 終わり-->
+
+    <!--スカパー-->
+	<jaxws:endpoint id="detailSkypService"
+        implementor="jp.co.isid.kkh.customer.skyp.service.detail.DetailSkypService"
+        address="/DetailSkypService">
+        <jaxws:inInterceptors>
+            <ref bean="DetailSkypServiceAccessLogInterceptor"/>
+            <ref bean="DetailSkypServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--スカパー   終わり-->
+
+    <jaxws:endpoint id="inputService"
+        implementor="jp.co.isid.kkh.customer.acom.service.input.InputService"
+        address="/InputService">
+        <jaxws:inInterceptors>
+            <ref bean="InputServiceAccessLogInterceptor"/>
+            <ref bean="InputServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="commonService"
+        implementor="jp.co.isid.kkh.service.common.CommonService"
+        address="/CommonService">
+        <jaxws:inInterceptors>
+            <ref bean="CommonServiceAccessLogInterceptor"/>
+            <ref bean="CommonServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="detailService"
+        implementor="jp.co.isid.kkh.service.detail.DetailService"
+        address="/DetailService">
+        <jaxws:inInterceptors>
+            <ref bean="DetailServiceAccessLogInterceptor"/>
+            <ref bean="DetailServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+        <jaxws:endpoint id="logService"
+        implementor="jp.co.isid.kkh.service.log.LogService"
+        address="/LogService">
+        <jaxws:inInterceptors>
+            <ref bean="LogServiceAccessLogInterceptor"/>
+            <ref bean="LogServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <!--東宝レポート-->
+	<jaxws:endpoint id="reportService"
+        implementor="jp.co.isid.kkh.customer.toh.service.report.ReportService"
+        address="/ReportService">
+        <jaxws:inInterceptors>
+            <ref bean="ReportServiceAccessLogInterceptor"/>
+            <ref bean="ReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--東宝レポート   終わり-->
+
+    <!--マックレポート-->
+	<jaxws:endpoint id="macReportService"
+        implementor="jp.co.isid.kkh.customer.mac.service.report.MacReportService"
+        address="/MacReportService">
+        <jaxws:inInterceptors>
+            <ref bean="MacReportServiceAccessLogInterceptor"/>
+            <ref bean="MacReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--マックレポート   終わり-->
+
+    <!--アコムレポート-->
+	<jaxws:endpoint id="acomReportService"
+        implementor="jp.co.isid.kkh.customer.acom.service.report.AcomReportService"
+        address="/AcomReportService">
+        <jaxws:inInterceptors>
+            <ref bean="AcomReportServiceAccessLogInterceptor"/>
+            <ref bean="AcomReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--アコムレポート   終わり-->
+
+    <!--スカパーレポート-->
+	<jaxws:endpoint id="reportSkypService"
+        implementor="jp.co.isid.kkh.customer.skyp.service.report.ReportSkypService"
+        address="/ReportSkypService">
+        <jaxws:inInterceptors>
+            <ref bean="ReportSkypServiceAccessLogInterceptor"/>
+            <ref bean="ReportSkypServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--スカパーレポート   終わり-->
+
+	<!--アサヒレポート-->
+	<jaxws:endpoint id="ashReportService"
+        implementor="jp.co.isid.kkh.customer.ash.service.report.AshReportService"
+        address="/AshReportService">
+        <jaxws:inInterceptors>
+            <ref bean="AshReportServiceAccessLogInterceptor"/>
+            <ref bean="AshReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--アサヒレポート   終わり-->
+
+    <!--ユニチャームレポート-->
+    <jaxws:endpoint id="uniReportService"
+        implementor="jp.co.isid.kkh.customer.uni.service.report.UniReportService"
+        address="/UniReportService">
+        <jaxws:inInterceptors>
+            <ref bean="UniReportServiceAccessLogInterceptor"/>
+            <ref bean="UniReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+    <!--ユニチャームレポート   終わり-->
+
+    <!--公文レポート-->
+    <jaxws:endpoint id="kmnReportService"
+        implementor="jp.co.isid.kkh.customer.kmn.service.report.KmnReportService"
+        address="/KmnReportService">
+        <jaxws:inInterceptors>
+            <ref bean="KmnReportServiceAccessLogInterceptor"/>
+            <ref bean="KmnReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+    <!--公文レポート   終わり-->
+
+	<!-- 履歴-->
+	<jaxws:endpoint id="historyService"
+        implementor="jp.co.isid.kkh.service.history.HistoryService"
+        address="/HistoryService">
+        <jaxws:inInterceptors>
+            <ref bean="HistoryServiceAccessLogInterceptor"/>
+            <ref bean="HistoryServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!-- 履歴終わり-->
+
+	<!-- ライオンマスタ -->
+	<jaxws:endpoint id="masterLionService"
+        implementor="jp.co.isid.kkh.customer.lion.service.master.MasterLionService"
+        address="/MasterLionService">
+        <jaxws:inInterceptors>
+            <ref bean="MasterLionServiceAccessLogInterceptor"/>
+            <ref bean="MasterLionServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!-- ライオンマスタ 終わり-->
+
+	<!-- ライオン レポート-->
+	<jaxws:endpoint id="lionReportService"
+        implementor="jp.co.isid.kkh.customer.lion.service.report.LionReportService"
+        address="/LionReportService">
+        <jaxws:inInterceptors>
+            <ref bean="LionReportServiceAccessLogInterceptor"/>
+            <ref bean="LionReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!-- ライオン レポート 終わり-->
+
+	<!--ライオン件名変更-->
+	<jaxws:endpoint id="lionDetailService"
+        implementor="jp.co.isid.kkh.customer.lion.service.detail.LionDetailService"
+        address="/LionDetailService">
+        <jaxws:inInterceptors>
+            <ref bean="LionDetailServiceAccessLogInterceptor"/>
+            <ref bean="LionDetailServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!--ライオン件名変更   終わり-->
+
+    <!-- アコム 請求データ出力 -->
+    <jaxws:endpoint id="claimAcomService"
+        implementor="jp.co.isid.kkh.customer.acom.service.claim.ClaimAcomService"
+        address="/ClaimAcomService">
+        <jaxws:inInterceptors>
+            <ref bean="AcomClaimServiceAccessLogInterceptor"/>
+            <ref bean="AcomClaimServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+    <!-- アコム 請求データ出力 終わり -->
+
+    <!-- ログイン -->
+     <jaxws:endpoint id="loginService"
+        implementor="jp.co.isid.kkh.service.login.LoginService"
+        address="/LoginService">
+        <jaxws:inInterceptors>
+            <ref bean="LoginServiceAccessLogInterceptor"/>
+            <ref bean="LoginServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+    <!-- ログイン 終わり -->
+
+	<!-- エプソン レポート-->
+	<jaxws:endpoint id="epsonReportService"
+        implementor="jp.co.isid.kkh.customer.epson.service.report.EpsonReportService"
+        address="/EpsonReportService">
+        <jaxws:inInterceptors>
+            <ref bean="EpsonReportServiceAccessLogInterceptor"/>
+            <ref bean="EpsonReportServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!-- エプソン レポート 終わり-->
+
+	<!-- エプソン 明細入力-->
+	<jaxws:endpoint id="detailEpsonService"
+        implementor="jp.co.isid.kkh.customer.epson.service.detail.DetailEpsonService"
+        address="/DetailEpsonService">
+        <jaxws:inInterceptors>
+            <ref bean="DetailEpsonServiceAccessLogInterceptor"/>
+            <ref bean="DetailEpsonServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+	<!-- エプソン 明細入力 終わり-->
+
+    <bean id="MasterServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>master</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findMasterDefineByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findMasterDefineByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findMasterByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findMasterByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registerMaster</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"registerMasterをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findMasterItemByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findMasterItemByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="MasterMacServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>master</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registerMacMaster</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"registerMacMasterをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+<!--アサヒ-->
+    <bean id="DetailAshServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findDetailDataByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findDetailDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>mergeData</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"mergeDataをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--アサヒ 終わり-->
+
+<!--アコム-->
+    <bean id="DetailAcomServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHatyuNumget</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findHatyuNumgetをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHatyuget</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findHatyugetをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findMeisaiDataByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findMeisaiDataByCondをcallしました。"</value></property>
+                </bean>
+                 <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findsyouhinName</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findsyouhinNameをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHatyuConfirm</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"findHatyuConfirmをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--アコム 終わり-->
+
+<!--武田薬品-->
+ <bean id="DetailTakedaServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>upJissiNoBycond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"upJissiNoBycondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>autoNoBycond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"autoNoBycondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>jissiNo</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"jissiNoをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findMaxJissiNoByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findMaxJissiNoByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findJissiNoCntByCond</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"findJissiNoCntByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--武田薬品 終わり-->
+
+<!--武田請求明細-->
+ <bean id="ReportTkdBillingServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>report</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportTkdBillingByMiddleClassificationByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportTkdBillingByMiddleClassificationByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportTkdBillingByItemByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findReportTkdBillingByItemByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportTkdBillingForPlanningCostByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findReportTkdBillingForPlanningCostByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--武田請求明細 終わり-->
+
+<!--スカパー-->
+ <bean id="DetailSkypServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findOrderByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findOrderByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updateOrderData</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"updateOrderDataをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--スカパー 終わり-->
+
+<!--東宝レポート-->
+ <bean id="ReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>upJissiNoBycond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"upJissiNoBycondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>autoNoBycond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"autoNoBycondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>jissiNo</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"jissiNoをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findMaxJissiNoByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findMaxJissiNoByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findJissiNoCntByCond</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"findJissiNoCntByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--東宝レポート 終わり-->
+
+<!--マクドレポート-->
+ <bean id="MacReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportMacByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportMacByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportMacPurchaseByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findReportMacPurchaseByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportMacLicenseeByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findReportMacLicenseeByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportMacGetDenNumByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findReportMacGetDenNumByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updateReportMacPur</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"updateReportMacPurをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportMacRequestByCond</value></property>
+                    <property name="functionId"><value>00000006</value></property>
+                    <property name="message"><value>"findReportMacRequestByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updateReportMacReq</value></property>
+                    <property name="functionId"><value>00000007</value></property>
+                    <property name="message"><value>"updateReportMacReqをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--マクドレポート 終わり-->
+
+	<!--アコムレポート-->
+	 <bean id="AcomReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0001</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportAcomByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportAcomByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+	<!--アコムレポート 終わり-->
+
+<!--スカパーレポート-->
+ <bean id="ReportSkypServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportSkypByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportSkypByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--スカパーレポート 終わり-->
+
+<!--アサヒレポート-->
+ <bean id="AshReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportAshMediaByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportAshMediaByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportAshMediaCodeByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findReportAshMediaCodeByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportAshMediaChklstByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findReportAshMediaChklstByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportAshKoukokuHiByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findReportAshKoukokuHiByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--アサヒレポート 終わり-->
+
+<!--履歴 -->
+<bean id="HistoryServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHistoryByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findHistoryByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--履歴 終わり-->
+
+<!--ライオン  -->
+<bean id="MasterLionServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHistoryByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findHistoryByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--ライオン  終わり-->
+
+<!--ライオン件名変更-->
+ <bean id="LionDetailServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updateSubjectData</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"updateSubjectDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>FindLionTVSpotResult</value></property>
+                    <property name="functionId"><value>00000006</value></property>
+                    <property name="message"><value>"FindLionTVSpotResultをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--ライオン件名変更 終わり-->
+
+<!--ユニチャームレポート-->
+     <bean id="UniReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportUniByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportUniByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--ユニチャームレポート 終わり-->
+
+<!--ライオンレポート-->
+     <bean id="LionReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0005</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportLionByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportLionByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findNewReportLionByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findNewReportLionByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findFDLionByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findFDLionByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--ライオンレポート 終わり-->
+
+<!--アコム 請求データ出力 -->
+     <bean id="AcomClaimServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findClaimByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findClaimByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updateOutFlg</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"updateOutFlgをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--アコム 請求データ出力 終わり -->
+
+    <bean id="InputServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>input</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHikByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findHikByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registAwarenessTrialData</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"registAwarenessTrialDataをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="CommonServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>common</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findCommonByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findCommonByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findCommonCodeMasterByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findCommonCodeMasterByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getEigyoBi</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"getEigyoBiをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="DetailServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findJyutyuDataByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findJyutyuDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updateDisplayData</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"updateDisplayDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findDetailDataByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findDetailDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registerBulkData</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"registerBulkDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>deleteJyutyuData</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"deleteJyutyuDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>changeSeikyuYymm</value></property>
+                    <property name="functionId"><value>00000006</value></property>
+                    <property name="message"><value>"changeSeikyuYymmをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registerJyutyuData</value></property>
+                    <property name="functionId"><value>00000007</value></property>
+                    <property name="message"><value>"registerJyutyuDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>mergeJyutyuData</value></property>
+                    <property name="functionId"><value>00000008</value></property>
+                    <property name="message"><value>"mergeJyutyuDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>mergeCancelJyutyuData</value></property>
+                    <property name="functionId"><value>00000009</value></property>
+                    <property name="message"><value>"mergeCancelJyutyuDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>FindHatyuNumget</value></property>
+                    <property name="functionId"><value>00000010</value></property>
+                    <property name="message"><value>"FindHatyuNumgetをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>JyutNoTouGou</value></property>
+                    <property name="functionId"><value>00000011</value></property>
+                    <property name="message"><value>"JyutNoTouGouをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>JyutNoTouGouIns</value></property>
+                    <property name="functionId"><value>00000012</value></property>
+                    <property name="message"><value>"JyutNoTouGouInsをcallしました。"</value></property>
+                </bean>
+                 <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>FindHatyuget</value></property>
+                    <property name="functionId"><value>00000013</value></property>
+                    <property name="message"><value>"FindHatyugetをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="LogServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>log</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findLogByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findLogByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registLogByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"registLogByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ログイン -->
+    <bean id="LoginServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>login</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getAccountSecurityRole</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"getAccountSecurityRoleをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getLoginInitInfo</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"getLoginInitInfoをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getCustomerInfo</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"getCustomerInfoをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>login</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"loginをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getOpenCustomerInfo</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"getOpenCustomerInfoをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--ログイン 終わり-->
+
+    <!--エプソンレポート-->
+    <bean id="EpsonReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportEpsonSubMissionByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportEpsonSubMissionByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportEpsonSeikyuPlanByCond</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findReportEpsonSeikyuPlanByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--エプソンレポート 終わり-->
+
+    <!--エプソン 明細入力-->
+    <bean id="DetailEpsonServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findDetailDataEpsonByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findDetailDataEpsonByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>bulkUpdateDetailDataEpson</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"bulkUpdateDetailDataEpsonをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>mergeBulkJyutyuDataEpson</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"mergeBulkJyutyuDataEpsonをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findSeikyuDataEpsonByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findSeikyuDataEpsonByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--エプソン 明細入力 終わり-->
+
+<!--公文レポート-->
+     <bean id="KmnReportServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>detail</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportKmnByCondCmd</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReportKmnByCondCmdをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReportKmnListByCondCmd</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findReportKmnListByCondCmdをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--公文レポート 終わり-->
+
+    <bean id="MasterServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key006</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="MasterMacServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key013</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+<!--アサヒ-->
+   <bean id="DetailAshServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key014</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+<!--アサヒ 終わり-->
+
+    <!--武田薬品-->
+   <bean id="DetailTakedaServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key009</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--武田薬品 終わり-->
+
+    <!--武田請求明細-->
+    <bean id="ReportTkdBillingServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key019</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--武田請求明細 終わり-->
+
+    <!--スカパー-->
+   <bean id="DetailSkypServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key011</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--スカパー 終わり-->
+
+    <bean id="InputServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key005</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+        <bean id="CommonServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key007</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="DetailServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key001</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="LogServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key008</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!--東宝レポート-->
+    <bean id="ReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key010</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--東宝レポート 終わり-->
+
+    <!--マクドレポート-->
+    <bean id="MacReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key012</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--マクドレポート 終わり-->
+
+    <!--アコムレポート-->
+    <bean id="AcomReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key015</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--アコムレポート 終わり-->
+
+    <!--スカパーレポート-->
+   <bean id="ReportSkypServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key016</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--スカパーレポート 終わり-->
+
+    <!--アサヒレポート-->
+    <bean id="AshReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key017</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--アサヒレポート 終わり-->
+
+    <!--ユニチャームレポート-->
+    <bean id="UniReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key018</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--ユニチャームレポート 終わり-->
+
+    <!-- 履歴 -->
+	<bean id="HistoryServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key020</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- 履歴 終わり-->
+
+     <!--ライオンマスタ  -->
+	<bean id="MasterLionServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key021</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--ライオンマスタ  終わり-->
+
+	<!--ライオンレポート-->
+    <bean id="LionReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key022</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--ライオンレポート 終わり-->
+
+    <!--ライオン件名変更-->
+   <bean id="LionDetailServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key023</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--ライオン件名変更 終わり-->
+
+    <!-- アコム 請求データ出力 -->
+    <bean id="AcomClaimServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key025</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- アコム 請求データ出力 終わり-->
+
+    <!-- ログイン -->
+    <bean id="LoginServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key026</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- ログイン 終わり-->
+
+    <!-- エプソンレポート -->
+    <bean id="EpsonReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key027</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- エプソンレポート 終わり-->
+
+    <!-- エプソン 明細入力 -->
+    <bean id="DetailEpsonServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key028</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- エプソン 明細入力 終わり-->
+
+    <!-- アコム 明細入力 -->
+    <bean id="DetailAcomServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key029</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- アコム 明細入力 終わり-->
+
+    <!--公文 帳票-->
+    <bean id="KmnReportServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key030</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--公文 帳票 終わり-->
+</beans>

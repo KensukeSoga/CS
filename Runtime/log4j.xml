@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="D:/eclipse4.5/workspace/kkh-sv/Runtime/Logs/kkh-service.log" />
+        <param name="MaxFileSize" value="10MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p %c %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender" >
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p %c %m%n"/>
+        </layout>
+    </appender>
+
+
+
+    <!-- SOA Framework が出力するフレームワーク実行ログのAppender -->
+    <appender name="SOASERVICE_INFOLOG" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="D:/eclipse4.5/workspace/kkh-sv/Runtime/Logs/soa-service-info.log" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p %c %m%n" />
+        </layout>
+    </appender>
+
+    <!-- SOA Framework が出力するアクセスログ（稼動ログ）のAppender -->
+    <appender name="ACCESSLOG" class="org.apache.log4j.FileAppender">
+         <param name="File" value="D:/eclipse4.5/workspace/kkh-sv/Runtime/Logs/general.log" />
+         <layout class="org.apache.log4j.PatternLayout">
+              <param name="ConversionPattern" value="%m%n" />
+         </layout>
+    </appender>
+
+    <!-- SOA Framework が出力する出力に失敗した不完全なアクセスログ情報のAppender -->
+    <appender name="ACCESSLOG_INVALIDLOG" class="org.apache.log4j.FileAppender">
+         <param name="File" value="D:/eclipse4.5/workspace/kkh-sv/Runtime/Logs/invalid_general.log" />
+         <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n" />
+         </layout>
+    </appender>
+
+
+
+    <!-- SOA Framework が出力するフレームワーク実行ログ -->
+    <category name="jp.co.isid.soa" additivity="false">
+        <priority value="info"/>
+        <appender-ref ref="SOASERVICE_INFOLOG"/>
+    </category>
+
+    <!-- SOA Framework が出力するアクセスログ（稼動ログ） -->
+    <category name="soa.accessLog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="ACCESSLOG"/>
+    </category>
+
+    <!-- SOA Framework が出力する出力に失敗した不完全なアクセスログ情報 -->
+    <category name="soa.invalidLog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="ACCESSLOG_INVALIDLOG"/>
+    </category>
+
+
+
+    <root>
+        <level value="DEBUG" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</log4j:configuration>
