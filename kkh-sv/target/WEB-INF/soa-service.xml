@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+
+    <!--
+        SOA Service Framework パラメータ定義です（必須定義）。
+
+        ・exceptionHandlerDebugMode ...
+            クライアントにスローする例外にデバッグ用の情報を含めるかどうかの設定。
+
+            セキュリティホールになりうるため、運用時にはfalseに設定してください。
+
+
+        ・accessLogOutputEncoding ... アクセスログ（稼動ログ）の出力エンコーディング設定
+
+        ・accessLogDefaultIdentifier ... アクセスログ（稼動ログ）のデフォルト識別子
+
+        ・accessLogOutCategory ... アクセスログ（稼動ログ）のLog4j出力カテゴリ
+        ・accessLogInvalidCategory ... アクセスログ（稼動ログ）の異常系データのLog4j出力カテゴリ
+    -->
+    <bean id="frameworkParameter" class="jp.co.isid.soa.framework.service.core.FrameworkParameterBean">
+        <property name="exceptionHandlerDebugMode"><value>true</value></property>
+        <property name="accessLogOutputEncoding"><value>Windows-31J</value></property>
+        <!--<property name="accessLogDefaultIdentifier"><value></value></property>-->
+        <property name="accessLogOutCategory"><value>soa.accessLog</value></property>
+        <property name="accessLogInvalidCategory"><value>soa.invalidAccessLog</value></property>
+    </bean>
+
+    <!--
+        Javaクライアント向けメッセージ圧縮フィルタの定義です（必須定義）。
+
+    -->
+    <bean id="fastinfoset" class="org.apache.cxf.feature.FastInfosetFeature"/>
+
+    <!-- NJSecurityServiceのサービス定義です（必須定義）。 -->
+    <jaxws:endpoint id="njSecurityService"
+        implementor="jp.co.isid.njsecurity.webservice.stateless.NJSecurityStatelessService"
+        address="/NjSecurityService">
+    </jaxws:endpoint>
+
+    <!-- 以下サービスごとの定義です -->
+
+    <jaxws:endpoint id="commonCodeMasterService"
+        implementor="jp.co.isid.kkh.service.common.CommonCodeMasterService"
+        address="/CommonCodeMasterService">
+        <jaxws:inInterceptors>
+            <ref bean="commonCodeMasterServiceAccessLogInterceptor"/>
+            <ref bean="commonCodeMasterServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="loginLogService"
+        implementor="jp.co.isid.kkh.service.loginlog.LoginLogService"
+        address="/LoginLogService">
+        <jaxws:inInterceptors>
+            <ref bean="loginLogServiceAccessLogInterceptor"/>
+            <ref bean="loginLogServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="planDataService"
+        implementor="jp.co.isid.kkh.service.plan.PlanDataService"
+        address="/PlanDataService">
+        <jaxws:inInterceptors>
+            <ref bean="planDataServiceAccessLogInterceptor"/>
+            <ref bean="planDataServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="reviewDataService"
+        implementor="jp.co.isid.kkh.service.review.ReviewDataService"
+        address="/ReviewDataService">
+        <jaxws:inInterceptors>
+            <ref bean="reviewDataServiceAccessLogInterceptor"/>
+            <ref bean="reviewDataServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="awarenessTrialService"
+        implementor="jp.co.isid.kkh.service.awarenesstrial.AwarenessTrialService"
+        address="/AwarenessTrialService">
+        <jaxws:inInterceptors>
+            <ref bean="AwarenessTrialServiceAccessLogInterceptor"/>
+            <ref bean="AwarenessTrialServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="masterService"
+        implementor="jp.co.isid.kkh.service.mastermaintenance.MasterService"
+        address="/MasterService">
+        <jaxws:inInterceptors>
+            <ref bean="MasterServiceAccessLogInterceptor"/>
+            <ref bean="MasterServiceACLInterceptor"/>
+        </jaxws:inInterceptors>
+        <jaxws:features>
+            <ref bean="fastinfoset" />
+        </jaxws:features>
+    </jaxws:endpoint>
+
+    <bean id="commonCodeMasterServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0001</value></property>
+        <property name="functionId"><value>common01</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findCommonCodeMasterByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findCommonCodeMasterByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="loginLogServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0003</value></property>
+        <property name="functionId"><value>loginlog</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registLog</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"registLogをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="planDataServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0000</value></property>
+        <property name="functionId"><value>commonId</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>initialize</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"initializeをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findPlanDataByTerm</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findPlanDataByTermをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findPlanDataByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findPlanDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findPlanDataByPK</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findPlanDataByPKをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>registPlanData</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"registPlanDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>updatePlanData</value></property>
+                    <property name="functionId"><value>00000006</value></property>
+                    <property name="message"><value>"updatePlanDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>deletePlanData</value></property>
+                    <property name="functionId"><value>00000007</value></property>
+                    <property name="message"><value>"deletePlanDataをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findPlanDataSaveInit</value></property>
+                    <property name="functionId"><value>00000008</value></property>
+                    <property name="message"><value>"findPlanDataSaveInitをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="reviewDataServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0000</value></property>
+        <property name="functionId"><value>commonId</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReviewDataByTerm</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findReviewDataByTermをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findCompetitorsByTerm</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"findCompetitorsByTermをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findPlanDataByCond</value></property>
+                    <property name="functionId"><value>00000003</value></property>
+                    <property name="message"><value>"findPlanDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findActualDataByCond</value></property>
+                    <property name="functionId"><value>00000004</value></property>
+                    <property name="message"><value>"findActualDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findRosDataByCond</value></property>
+                    <property name="functionId"><value>00000005</value></property>
+                    <property name="message"><value>"findRosDataByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findReviewDataDetailByCond</value></property>
+                    <property name="functionId"><value>00000006</value></property>
+                    <property name="message"><value>"findReviewDataDetailByCondをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findCompetitorsDetailByCond</value></property>
+                    <property name="functionId"><value>00000007</value></property>
+                    <property name="message"><value>"findCompetitorsDetailByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AwarenessTrialServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>awarenesstrial</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getAwarenessTrialDataByTerm</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"getAwarenessTrialDataByTermをcallしました。"</value></property>
+                </bean>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>getScatterPlotData</value></property>
+                    <property name="functionId"><value>00000002</value></property>
+                    <property name="message"><value>"getScatterPlotDataをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="MasterServiceAccessLogInterceptor" class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInterceptor">
+        <property name="systemId"><value>apl00000</value></property>
+        <property name="screenId"><value>scrn0004</value></property>
+        <property name="functionId"><value>master</value></property>
+        <property name="accessLogInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.accesslog.AccessLogInfo">
+                    <property name="method"><value>findHistoryByCond</value></property>
+                    <property name="functionId"><value>00000001</value></property>
+                    <property name="message"><value>"findHistoryByCondをcallしました。"</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="commonCodeMasterServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key002</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="loginLogServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key003</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="planDataServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key001</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="reviewDataServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key004</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AwarenessTrialServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key005</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="MasterServiceACLInterceptor" class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInterceptor">
+        <property name="aclInfoList">
+            <list>
+                <bean class="jp.co.isid.soa.framework.service.interceptor.acl.ACLInfo">
+                    <property name="systemId"><value>sys001</value></property>
+                    <property name="accessKey"><value>key006</value></property>
+                    <property name="allowMethods"><value>*</value></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
