@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="SHIFT_JIS"?>
 <!DOCTYPE Parameter SYSTEM "Parameter.dtd" [
-   <!ENTITY xmlpath_win  "D:/eclipse4.5/workspace/kkh-sv/Runtime/">
+   <!ENTITY xmlpath_win  "D:/workspace/for_koukokuhi_sv/kkh-sv/Runtime/">
    <!ENTITY xmlpath_unix "/ns/Runtime/">
 ]>
 

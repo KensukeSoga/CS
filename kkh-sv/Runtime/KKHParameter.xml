@@ -4,43 +4,43 @@
 ]>
 <Parameter kind="KKH">
 
-	<!-- HB用メタディレクトリ -->
-	<!-- <Item Name="OracleDataSourceUse" Value="false"/> <Item Name="OracleDataSourceName" 
-		Value="datasource.Oracle"/> -->
-	<Item Name="DBDriver" Value="com.ddtek.jdbc.oracle.OracleDriver" />
-	<!-- HB用開発環境 -->
-	<!-- <Item Name="DBUrl" Value="jdbc:datadirect:oracle://clmtg05t.dentsu.co.jp:26518;SID=tclm;CodePageOverride=Windows-31J 
-		NOCONVERT;ConnectionRetryCount=0"/> <Item Name="DBKey" Value="user,password"/> 
-		<Item Name="DBParameter" Value="hb_apl1,hb_apl1"/> -->
-	<!-- HB用総合環境 -->
-	<Item Name="DBUrl"
-		Value="jdbc:datadirect:oracle://tgdbntv31t.dentsu.co.jp:20639;SID=skkh;CodePageOverride=Windows-31J NOCONVERT;ConnectionRetryCount=0" />
-	<Item Name="DBKey" Value="user,password" />
-	<Item Name="DBParameter" Value="hb_apl1,s_hb_apl1" />
-	<!-- HB用本番環境 -->
-	<!-- <Item Name="DBUrl" Value="jdbc:datadirect:oracle://kkhwo30.dentsu.co.jp:20836;SID=kkhm;CodePageOverride=MS932;ConnectionRetryCount=0"/> 
-		<Item Name="DBKey" Value="user,password"/> <Item Name="DBParameter" Value="hb_apl1,coco91ap"/> -->
+  <!-- HB用メタディレクトリ -->
+  <!-- <Item Name="OracleDataSourceUse" Value="false"/> <Item Name="OracleDataSourceName"
+    Value="datasource.Oracle"/> -->
+  <Item Name="DBDriver" Value="com.ddtek.jdbc.oracle.OracleDriver" />
+  <!-- HB用開発環境 -->
+  <!-- <Item Name="DBUrl" Value="jdbc:datadirect:oracle://clmtg05t.dentsu.co.jp:26518;SID=tclm;CodePageOverride=Windows-31J
+    NOCONVERT;ConnectionRetryCount=0"/> <Item Name="DBKey" Value="user,password"/>
+    <Item Name="DBParameter" Value="hb_apl1,hb_apl1"/> -->
+  <!-- HB用総合環境 -->
+  <Item Name="DBUrl"
+    Value="jdbc:datadirect:oracle://tgdbntv31t.dentsu.co.jp:20639;SID=skkh;CodePageOverride=Windows-31J NOCONVERT;ConnectionRetryCount=0" />
+  <Item Name="DBKey" Value="user,password" />
+  <Item Name="DBParameter" Value="hb_apl1,s_hb_apl1" />
+  <!-- HB用本番環境 -->
+  <!-- <Item Name="DBUrl" Value="jdbc:datadirect:oracle://kkhwo30.dentsu.co.jp:20836;SID=kkhm;CodePageOverride=MS932;ConnectionRetryCount=0"/>
+    <Item Name="DBKey" Value="user,password"/> <Item Name="DBParameter" Value="hb_apl1,coco91ap"/> -->
 
-	<!-- 業務会計ＤＢ接続情報 -->
-	<Item Name="ECDBDriver" Value="com.ddtek.jdbc.oracle.OracleDriver" />
-	<!-- 開発 -->
-	<!-- <Item Name="ECDBUrl" Value="jdbc:datadirect:oracle://saptg20t.dentsu.co.jp:15292;SID=hd3;CodePageOverride=Windows-31J
-		NOCONVERT;ConnectionRetryCount=0"/> <Item Name="ECDBKey" Value="user,password"/>
-		<Item Name="ECDBParameter" Value="hb_apl300,hb_apl300"/> -->
-	<!-- 検証環境 -->
-	<Item Name="ECDBUrl"
-		Value="jdbc:datadirect:oracle://kksrc01v.dentsu.co.jp:20202;ServiceName=skks_apl1;CodePageOverride=MS932;ConnectionRetryCount=0" />
-	<Item Name="ECDBKey" Value="user,password" />
-	<Item Name="ECDBParameter" Value="hb_apl3,sa_kks_hb" />
-	<!-- 本番 -->
-	<!-- <Item Name="ECDBUrl" Value="jdbc:datadirect:oracle://gymrc01.dentsu.co.jp:20315;SID=DHP;CodePageOverride=MS932;ConnectionRetryCount=0"/> 
-		<Item Name="ECDBKey" Value="user,password"/> <Item Name="ECDBParameter" Value="hb_apl3,akksshb3"/> -->
+  <!-- 業務会計ＤＢ接続情報 -->
+  <Item Name="ECDBDriver" Value="com.ddtek.jdbc.oracle.OracleDriver" />
+  <!-- 開発 -->
+  <!-- <Item Name="ECDBUrl" Value="jdbc:datadirect:oracle://saptg20t.dentsu.co.jp:15292;SID=hd3;CodePageOverride=Windows-31J
+    NOCONVERT;ConnectionRetryCount=0"/> <Item Name="ECDBKey" Value="user,password"/>
+    <Item Name="ECDBParameter" Value="hb_apl300,hb_apl300"/> -->
+  <!-- 検証環境 -->
+  <Item Name="ECDBUrl"
+    Value="jdbc:datadirect:oracle://kksrc01v.dentsu.co.jp:20202;ServiceName=skks_apl1;CodePageOverride=MS932;ConnectionRetryCount=0" />
+  <Item Name="ECDBKey" Value="user,password" />
+  <Item Name="ECDBParameter" Value="hb_apl3,sa_kks_hb" />
+  <!-- 本番 -->
+  <!-- <Item Name="ECDBUrl" Value="jdbc:datadirect:oracle://gymrc01.dentsu.co.jp:20315;SID=DHP;CodePageOverride=MS932;ConnectionRetryCount=0"/>
+    <Item Name="ECDBKey" Value="user,password"/> <Item Name="ECDBParameter" Value="hb_apl3,akksshb3"/> -->
 
-	<Item Name="Log4jXMLPath" Value="D:/eclipse4.5/workspace/kkh-sv/Runtime/log4j.xml" />
+  <Item Name="Log4jXMLPath" Value="D:/workspace/for_koukokuhi_sv/kkh-sv/Runtime/log4j.xml" />
 
-	<!-- 検索時禁則文字 -->
-	<Item Name="NGStringList" Value="%,％,_,＿,'" />
+  <!-- 検索時禁則文字 -->
+  <Item Name="NGStringList" Value="%,％,_,＿,'" />
 
-	<!-- サービス共通チェックを行うか（true:する、false：しない） -->
-	<Item Name="ServiceCommonCheck" Value="false" />
+  <!-- サービス共通チェックを行うか（true:する、false：しない） -->
+  <Item Name="ServiceCommonCheck" Value="false" />
 </Parameter>
